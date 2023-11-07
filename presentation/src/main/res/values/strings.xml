@@ -7,9 +7,10 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="Loading">Loading</string>
-    <string name="Home">Home</string>
+    <string name="Menu">Menu</string>
+    <string name="Camera">Camera</string>
     <string name="Add">Add</string>
+    <string name="Home">Home</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

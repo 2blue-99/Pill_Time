@@ -1,4 +1,4 @@
-package com.example.pilltime.ui
+package com.example.pilltime.viewModel
 
 import androidx.lifecycle.ViewModel
 

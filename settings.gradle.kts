@@ -14,5 +14,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Pill Time"
-include(":app")
+include(":presentation")
 include(":data")
+include(":domain")

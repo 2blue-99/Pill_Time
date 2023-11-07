@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
  */
 
 @Composable
-fun HomeScreen(){
+fun CameraScreen(){
     Column(
         Modifier.fillMaxSize()
     ) {
-        Text(text = "여긴 홈")
+        Text(text = "여긴 카메라")
     }
 }
