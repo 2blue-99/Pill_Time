@@ -21,10 +21,10 @@ import com.example.pilltime.R
 import com.example.pilltime.ui.AddScreen
 import com.example.pilltime.ui.HomeScreen
 import com.example.pilltime.viewModel.MyViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 
-
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

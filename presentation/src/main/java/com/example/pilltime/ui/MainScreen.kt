@@ -3,10 +3,7 @@ package com.example.pilltime.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,16 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,24 +25,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pilltime.ui.theme.BlueSky
+import com.example.pilltime.viewModel.MyViewModel
+import com.example.domain.model.local.NoticeData
 
 /**
  * 2023-11-07
@@ -64,7 +60,11 @@ fun test() {
 fun MainScreen(
     modifier: Modifier = Modifier,
     list: List<String>,
+    viewModel: MyViewModel = hiltViewModel(),
 ) {
+    //TODO 여기 위치가 맞을까?
+    viewModel.getNoticeList()
+
     Column(
         modifier = modifier
             .background(BlueSky)
@@ -75,8 +75,8 @@ fun MainScreen(
                 .fillMaxWidth()
                 .height(100.dp),
         ) {
-            items(list) { item ->
-                AdCard(item)
+            items(list) { it ->
+                AdCard(it)
             }
         }
         Column(
@@ -95,24 +95,28 @@ fun MainScreen(
             )
         }
         Row(
-            Modifier.fillMaxWidth().padding(end = 5.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(end = 5.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End,
         ) {
             IconButton(
-                onClick = { /*TODO*/ }
+                onClick = { viewModel.addNotice() }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "", Modifier.size(50.dp,50.dp))
             }
         }
+
+        val notices by viewModel.uiState.collectAsState()
         LazyColumn(
             verticalArrangement  = Arrangement.spacedBy(10.dp),
             modifier = modifier
                 .fillMaxHeight()
                 .padding(horizontal = 5.dp)
         ) {
-            items(list) { item ->
-                NoticeComponent(item)
+            items(notices) { notice ->
+                NoticeComponent(notice)
             }
         }
     }
@@ -121,12 +125,12 @@ fun MainScreen(
 @Preview
 @Composable
 fun test2() {
-    AdCard("hello")
+    AdCard("listOf(NoticeData())")
 }
 
 @Composable
 fun AdCard(
-    name: String,
+    list: String,
     modifier: Modifier = Modifier,
 ) {
     val gradientColors = listOf(
@@ -141,14 +145,14 @@ fun AdCard(
     Row(
         modifier = modifier
             .width(LocalConfiguration.current.screenWidthDp.dp)
-            .height(90.dp)
+            .height(75.dp)
             .border(1.5.dp, Brush.horizontalGradient(gradientColors), RectangleShape)
             .background(Color.White),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            text = name,
+            text = list,
             modifier = modifier,
             style = MaterialTheme.typography.bodyMedium
         )
@@ -166,14 +170,14 @@ fun AdCard(
 
 @Composable
 fun NoticeComponent(
-    list: String,
+    data: NoticeData,
     modifier: Modifier = Modifier,
 ) {
-    var isChecked by rememberSaveable { mutableStateOf(false) }
+    var isChecked by rememberSaveable { mutableStateOf(data.isChecked) }
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp),
+            .height(85.dp),
         shape = MaterialTheme.shapes.medium
         ) {
         Row(
@@ -189,7 +193,7 @@ fun NoticeComponent(
             ) {
                 Text(text = "오전", fontSize = 15.sp)
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "8:30", fontSize = 30.sp)
+                Text(text = "${data.time}", fontSize = 30.sp)
             }
 
             Row(
@@ -197,7 +201,7 @@ fun NoticeComponent(
                 horizontalArrangement = Arrangement.End,
             ) {
                 Text(
-                    text = "11월 7일(금)"
+                    text = "${data.month}월 ${data.day}일"
                 )
                 Checkbox(
                     checked = isChecked,

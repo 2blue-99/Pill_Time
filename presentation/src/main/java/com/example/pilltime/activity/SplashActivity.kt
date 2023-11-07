@@ -21,12 +21,15 @@ import androidx.compose.ui.unit.dp
 import com.example.pilltime.R
 import com.example.pilltime.ui.theme.BlueSky
 import com.example.pilltime.ui.theme.PillTimeTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 
 /**
  * 2023-11-07
  * pureum
  */
+
+@AndroidEntryPoint
 class SplashActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
