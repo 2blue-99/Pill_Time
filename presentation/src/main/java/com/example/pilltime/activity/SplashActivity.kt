@@ -47,6 +47,7 @@ fun SplashScreen(
     LaunchedEffect(key1 = activity){
         delay(100L)
         activity.startActivity(intent)
+        activity.finish()
     }
     Column(
         modifier = modifier.fillMaxSize().background(BlueSky),
