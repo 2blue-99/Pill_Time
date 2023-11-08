@@ -136,7 +136,7 @@ fun MainScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "알람을 추가해주세요~")
+                Text(text = "알람을 추가해주세요~", color = Color.White, fontSize = 25.sp)
             }
         }
     }

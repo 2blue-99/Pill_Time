@@ -1,7 +1,4 @@
-@file:OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class
-)
+@file:OptIn(ExperimentalPermissionsApi::class)
 
 package com.example.pilltime.ui
 
@@ -35,6 +32,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.pilltime.R
 import com.example.pilltime.viewModel.MyViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberPermissionState
 
 /**
  * 2023-11-07
@@ -52,6 +52,7 @@ fun HomeScreen(
     viewModel: MyViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
+    val cameraPermissionState : PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     // Get current back stack entry
     val backStackEntry by navController.currentBackStackEntryAsState()
     // Get the name of the current screen
@@ -75,7 +76,12 @@ fun HomeScreen(
                 MainScreen(list = listOf("광고 1","광고 2","광고 3","광고 4","광고 4","광고 4"))
             }
             composable(PillTimeScreen.Camera.name) {
-                CameraScreen()
+                if(cameraPermissionState.hasPermission)
+                    CameraScreen()
+                else{
+                    cameraPermissionState.launchPermissionRequest()
+                    Log.e("TAG", "HomeScreen: 카메라 권한 없음~", )
+                }
             }
             composable(PillTimeScreen.Add.name) {
                 AddScreen()
