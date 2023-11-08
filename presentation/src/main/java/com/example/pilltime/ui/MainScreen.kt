@@ -1,7 +1,17 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.example.pilltime.ui
 
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +28,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,35 +47,26 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pilltime.ui.theme.BlueSky
 import com.example.pilltime.viewModel.MyViewModel
 import com.example.domain.model.local.NoticeData
+import com.example.pilltime.ui.theme.ClickOrange
 
 /**
  * 2023-11-07
  * pureum
  */
-
-@Composable
-fun test() {
-    MainScreen(list = listOf("광고 1", "faasfdasfsfssdf", "dfasdf"))
-}
-
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     list: List<String>,
     viewModel: MyViewModel = hiltViewModel(),
 ) {
-    //TODO 여기 위치가 맞을까?
-    viewModel.getNoticeList()
-
     Column(
         modifier = modifier
             .background(BlueSky)
@@ -76,7 +78,7 @@ fun MainScreen(
                 .height(100.dp),
         ) {
             items(list) { it ->
-                AdCard(it)
+                AdComponent(it)
             }
         }
         Column(
@@ -104,32 +106,49 @@ fun MainScreen(
             IconButton(
                 onClick = { viewModel.addNotice() }
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "", Modifier.size(50.dp,50.dp))
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "",
+                    Modifier.size(50.dp, 50.dp)
+                )
             }
         }
 
         val notices by viewModel.uiState.collectAsState()
-        LazyColumn(
-            verticalArrangement  = Arrangement.spacedBy(10.dp),
-            modifier = modifier
-                .fillMaxHeight()
-                .padding(horizontal = 5.dp)
-        ) {
-            items(notices) { notice ->
-                NoticeComponent(notice)
+        if (notices.isNotEmpty()) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 5.dp)
+            ) {
+                items(notices, key = { it.submitTime }) { notice ->
+                    NoticeComponent(
+                        modifier = Modifier.animateItemPlacement(),
+                        data = notice,
+                        deleteNotice = { viewModel.deleteNotice(notice.submitTime) },
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "알람을 추가해주세요~")
             }
         }
     }
 }
 
-@Preview
 @Composable
 fun test2() {
-    AdCard("listOf(NoticeData())")
+    AdComponent("listOf(NoticeData())")
 }
 
 @Composable
-fun AdCard(
+fun AdComponent(
     list: String,
     modifier: Modifier = Modifier,
 ) {
@@ -156,58 +175,104 @@ fun AdCard(
             modifier = modifier,
             style = MaterialTheme.typography.bodyMedium
         )
-
-
-//        Box(modifier = Modifier
-//            .width(LocalConfiguration.current.screenWidthDp.dp)
-//        ) {
-//        }
     }
-
 }
-
-
 
 @Composable
 fun NoticeComponent(
     data: NoticeData,
     modifier: Modifier = Modifier,
+    deleteNotice: () -> Unit,
 ) {
     var isChecked by rememberSaveable { mutableStateOf(data.isChecked) }
+    var isClick by rememberSaveable { mutableStateOf(false) }
+    val surfaceColor by animateColorAsState(
+        targetValue = if (isClick) ClickOrange else Color.White,
+        label = ""
+    )
+    val context = LocalContext.current
     Surface(
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
             .fillMaxWidth()
-            .height(85.dp),
-        shape = MaterialTheme.shapes.medium
-        ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            .clickable(
+                onClick = { isClick = !isClick }
+            )
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = 15.dp)
+                .background(surfaceColor)
+                .padding(vertical = 20.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 15.dp)
             ) {
-                Text(text = "오전", fontSize = 15.sp)
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "${data.time}", fontSize = 30.sp)
-            }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                ) {
+                    Text(text = "오전", fontSize = 15.sp, modifier = modifier  )
+                    Spacer(modifier = modifier.width(6.dp))
+                    Text(text = "${data.time}", fontSize = 30.sp)
+                }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End,
-            ) {
-                Text(
-                    text = "${data.month}월 ${data.day}일"
-                )
-                Checkbox(
-                    checked = isChecked,
-                    onCheckedChange = {isChecked = !isChecked}
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Text(
+                        text = "${data.month}월 ${data.day}일"
+                    )
+                    Checkbox(
+                        checked = isChecked,
+                        onCheckedChange = {
+                            isChecked = !isChecked
+                            isClick = !isClick
+                        }
+                    )
+                }
+            }
+            if (isClick) {
+                deleteNoticeButton(deleteNotice = {
+                    deleteNotice()
+                    isClick = false
+                })
             }
         }
     }
+}
+
+@Composable
+fun deleteNoticeButton(
+    modifier: Modifier = Modifier,
+    deleteNotice: () -> Unit
+){
+    Spacer(modifier = Modifier.size(3.dp))
+    Row {
+        IconButton(
+            onClick = { deleteNotice() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Clear,
+                modifier = modifier.size(40.dp, 40.dp),
+                contentDescription = ""
+            )
+        }
+    }
+}
+
+fun makeToast(context: Context, text: String) {
+    Toast.makeText(context, "$text", Toast.LENGTH_SHORT).show()
 }

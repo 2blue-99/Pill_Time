@@ -14,7 +14,7 @@ class RoomRepositoryImpl @Inject constructor(
     override suspend fun insertData(list: NoticeData) {
         roomDao.insertData(
             MyEntity(
-                uid = list.uid,
+                submitTime = list.submitTime,
                 time = list.time,
                 month = list.month,
                 day = list.day,
@@ -28,8 +28,8 @@ class RoomRepositoryImpl @Inject constructor(
         roomDao.getAllData().map { it.toDomainEntity() }.toMutableList()
 
 
-    override suspend fun deleteData(uid: String): Int =
-        roomDao.deleteData(uid = uid)
+    override suspend fun deleteData(submitTime: String): Int =
+        roomDao.deleteData(submitTime = submitTime)
 
 
 //    override suspend fun updateData(list: ): Int =

@@ -1,7 +1,7 @@
 package com.example.domain.model.local
 
 data class NoticeData(
-    val uid : String = "",
+    val submitTime : String = "",
     val time : String = "",
     val month: String = "",
     val day: String = "",

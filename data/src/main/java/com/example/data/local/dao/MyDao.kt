@@ -13,8 +13,8 @@ interface MyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertData(list: MyEntity)
 
-    @Query("Delete from NoticeTable where uid = :uid")
-    fun deleteData(uid: String): Int
+    @Query("Delete from NoticeTable where submitTime = :submitTime")
+    fun deleteData(submitTime: String): Int
 
 //    @Update(onConflict = OnConflictStrategy.REPLACE)
 //    fun updateData(list: MyEntity): Int

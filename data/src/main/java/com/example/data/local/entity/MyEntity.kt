@@ -8,7 +8,7 @@ import com.example.domain.model.local.NoticeData
 @Entity(tableName = "NoticeTable")
 data class MyEntity(
     @PrimaryKey
-    val uid : String,
+    val submitTime : String,
     @ColumnInfo
     val time : String,
     @ColumnInfo
@@ -22,7 +22,7 @@ data class MyEntity(
 )
 
 fun MyEntity.toDomainEntity(): NoticeData = NoticeData(
-    uid = this.uid,
+    submitTime = this.submitTime,
     time = this.time,
     month = this.month,
     day = this.day,
