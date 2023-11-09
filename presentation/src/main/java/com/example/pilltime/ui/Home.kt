@@ -47,6 +47,7 @@ enum class ScreenType(@StringRes val title: Int) {
     Home(title = R.string.Home)
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     navController: NavHostController = rememberNavController(),
@@ -99,7 +100,6 @@ private fun SootheBottomNavigation(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier
     ) {
-
         MyNavigationBarItem(
             icon = Icons.Default.AccountBox,
             text = "Camera",
@@ -132,54 +132,6 @@ private fun SootheBottomNavigation(
                 onChangeNav(ScreenType.Menu)
             }
         )
-//        NavigationBarItem(
-//            icon = {
-//                Icon(
-//                    imageVector = Icons.Default.Notifications,
-//                    contentDescription = null
-//                )
-//            },
-//            label = {
-//                Text("Camera")
-//            },
-//            selected = selectedType == ScreenType.Camera,
-//            onClick = {
-//                selectedType = ScreenType.Camera
-//                onChangeScreen(selectedType)
-//            }
-//        )
-//        NavigationBarItem(
-//            icon = {
-//                Icon(
-//                    imageVector = Icons.Default.Home,
-//                    contentDescription = null
-//                )
-//            },
-//            label = {
-//                Text("Home")
-//            },
-//            selected = selectedType == ScreenType.Home,
-//            onClick = {
-//                selectedType = ScreenType.Home
-//                onChangeScreen(selectedType)
-//            }
-//        )
-//        NavigationBarItem(
-//            icon = {
-//                Icon(
-//                    imageVector = Icons.Default.Menu,
-//                    contentDescription = null
-//                )
-//            },
-//            label = {
-//                Text("Menu")
-//            },
-//            selected = selectedType == ScreenType.Menu,
-//            onClick = {
-//                selectedType = ScreenType.Menu
-//                onChangeScreen(selectedType)
-//            }
-//        )
     }
 }
 

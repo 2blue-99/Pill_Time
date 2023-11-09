@@ -72,81 +72,30 @@ fun MainScreen(
             .background(BlueSky)
             .fillMaxSize()
     ) {
-        LazyRow(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(100.dp),
-        ) {
-            items(list) { it ->
-                AdComponent(it)
-            }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                modifier = modifier.padding(vertical = 50.dp),
-                fontSize = 25.sp,
-                text = "30분 후에 알람이 울립니다.",
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
-        }
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(end = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End,
-        ) {
-            IconButton(
-                onClick = { viewModel.addNotice() }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "",
-                    Modifier.size(50.dp, 50.dp)
-                )
-            }
-        }
+        TopAdView(list = list)
 
-        val notices by viewModel.uiState.collectAsState()
-        if (notices.isNotEmpty()) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = 5.dp)
-            ) {
-                items(notices, key = { it.submitTime }) { notice ->
-                    NoticeComponent(
-                        modifier = Modifier.animateItemPlacement(),
-                        data = notice,
-                        deleteNotice = { viewModel.deleteNotice(notice.submitTime) },
-                    )
-                }
-            }
-        } else {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "알람을 추가해주세요~", color = Color.White, fontSize = 25.sp)
-            }
+        NoticeText()
+
+        AddButton(viewModel = viewModel)
+
+        NoticeView(viewModel = viewModel)
+    }
+}
+@Composable
+fun TopAdView(
+    modifier: Modifier = Modifier,
+    list: List<String>
+){
+    LazyRow(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(100.dp),
+    ) {
+        items(list) { it ->
+            AdComponent(it)
         }
     }
 }
-
-@Composable
-fun test2() {
-    AdComponent("listOf(NoticeData())")
-}
-
 @Composable
 fun AdComponent(
     list: String,
@@ -177,7 +126,80 @@ fun AdComponent(
         )
     }
 }
-
+@Composable
+fun NoticeText(
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            modifier = modifier.padding(vertical = 50.dp),
+            fontSize = 25.sp,
+            text = "30분 후에 알람이 울립니다.",
+            color = Color.White,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+@Composable
+fun AddButton(
+    modifier: Modifier = Modifier,
+    viewModel: MyViewModel
+){
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(end = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End,
+    ) {
+        IconButton(
+            onClick = { viewModel.addNotice() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "",
+                Modifier.size(50.dp, 50.dp)
+            )
+        }
+    }
+}
+@Composable
+fun NoticeView(
+    viewModel: MyViewModel,
+    modifier: Modifier = Modifier
+){
+    val notices by viewModel.uiState.collectAsState()
+    if (notices.isNotEmpty()) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = modifier
+                .fillMaxHeight()
+                .padding(horizontal = 5.dp)
+        ) {
+            items(notices, key = { it.submitTime }) { notice ->
+                NoticeComponent(
+                    modifier = Modifier.animateItemPlacement(),
+                    data = notice,
+                    deleteNotice = { viewModel.deleteNotice(notice.submitTime) },
+                )
+            }
+        }
+    } else {
+        Column(
+            modifier = modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "알람을 추가해주세요~", color = Color.White, fontSize = 25.sp)
+        }
+    }
+}
 @Composable
 fun NoticeComponent(
     data: NoticeData,
