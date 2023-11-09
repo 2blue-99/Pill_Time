@@ -103,4 +103,6 @@ dependencies {
     implementation ("androidx.camera:camera-extensions:1.2.1")
 
     implementation ("com.google.accompanist:accompanist-permissions:0.23.1")
+
+    implementation ("io.coil-kt:coil-compose:1.4.0")
 }

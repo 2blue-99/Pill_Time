@@ -24,6 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -76,7 +78,7 @@ fun HomeScreen(
             }
             composable(ScreenType.Camera.name) {
                 if (cameraPermissionState.hasPermission)
-                    CameraScreen()
+                    CameraScreen(cameraPermissionState)
                 else
                     cameraPermissionState.launchPermissionRequest()
             }

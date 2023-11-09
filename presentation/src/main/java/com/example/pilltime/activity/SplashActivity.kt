@@ -66,7 +66,7 @@ fun SplashScreen(
 
     LaunchedEffect(key1 = activity) {
         isVisible = true
-        delay(2000L)
+        delay(1200L)
         activity.startActivity(intent)
         activity.finish()
     }
@@ -79,7 +79,7 @@ fun SplashScreen(
     ) {
         AnimatedVisibility(
             visible = isVisible,
-            enter = fadeIn(animationSpec = tween(1000, easing = LinearEasing))
+            enter = fadeIn(animationSpec = tween(500, easing = LinearEasing))
         ) {
             Image(
                 painter = painterResource(id = R.drawable.pill_time_logo),
