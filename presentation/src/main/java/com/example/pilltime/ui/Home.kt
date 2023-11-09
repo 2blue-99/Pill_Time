@@ -4,13 +4,13 @@ package com.example.pilltime.ui
 
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -23,7 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -40,116 +40,170 @@ import com.google.accompanist.permissions.rememberPermissionState
  * 2023-11-07
  * pureum
  */
-enum class PillTimeScreen(@StringRes val title: Int) {
+enum class ScreenType(@StringRes val title: Int) {
     Camera(title = R.string.Camera),
     Menu(title = R.string.Menu),
     Add(title = R.string.Add),
-    Home(title = R.string.Add),
+    Home(title = R.string.Home)
 }
 
 @Composable
 fun HomeScreen(
-    viewModel: MyViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    val cameraPermissionState : PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
-    // Get current back stack entry
+    val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     val backStackEntry by navController.currentBackStackEntryAsState()
-    // Get the name of the current screen
     val currentScreen =
-        PillTimeScreen.valueOf(backStackEntry?.destination?.route ?: PillTimeScreen.Menu.name)
+        ScreenType.valueOf(backStackEntry?.destination?.route ?: ScreenType.Menu.name)
     Scaffold(
-        bottomBar = { SootheBottomNavigation(
-            navController = navController,
-            onClick = {
-                navController.navigate(it.toString())
-                Log.e("TAG,", "HomeScreen: $it", )
-            }
-        ) },
+        bottomBar = {
+            if(currentScreen != ScreenType.Camera)
+                SootheBottomNavigation(
+                    onChangeNav = {
+                        navController.navigate(it.toString())
+                    }
+                )
+        },
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = PillTimeScreen.Home.name,
+            startDestination = ScreenType.Home.name,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(PillTimeScreen.Home.name) {
-                MainScreen(list = listOf("광고 1","광고 2","광고 3","광고 4","광고 4","광고 4"))
+            composable(ScreenType.Home.name) {
+                MainScreen(list = listOf("광고 1", "광고 2", "광고 3", "광고 4", "광고 4", "광고 4"))
             }
-            composable(PillTimeScreen.Camera.name) {
-                if(cameraPermissionState.hasPermission)
+            composable(ScreenType.Camera.name) {
+                if (cameraPermissionState.hasPermission)
                     CameraScreen()
-                else{
+                else
                     cameraPermissionState.launchPermissionRequest()
-                    Log.e("TAG", "HomeScreen: 카메라 권한 없음~", )
-                }
             }
-            composable(PillTimeScreen.Add.name) {
+            composable(ScreenType.Add.name) {
                 AddScreen()
             }
-            composable(PillTimeScreen.Menu.name) {
+            composable(ScreenType.Menu.name) {
                 MenuScreen()
             }
         }
     }
 }
+
 @Composable
 private fun SootheBottomNavigation(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
-    onClick : (PillTimeScreen) -> Unit
+    onChangeNav: (ScreenType) -> Unit,
 ) {
-    var isSelected by rememberSaveable { mutableStateOf(PillTimeScreen.Home) }
+    var selectedType by rememberSaveable { mutableStateOf(ScreenType.Home) }
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier
     ) {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = null
-                )
-            },
-            label = {
-                Text("Camera")
-            },
-            selected = isSelected == PillTimeScreen.Camera,
-            onClick = {
-                isSelected = PillTimeScreen.Camera
-                onClick(isSelected)
+
+        MyNavigationBarItem(
+            icon = Icons.Default.AccountBox,
+            text = "Camera",
+            inputType = ScreenType.Camera,
+            selectedType = selectedType,
+            onChange = {
+                selectedType = ScreenType.Camera
+                onChangeNav(ScreenType.Camera)
             }
         )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = null
-                )
-            },
-            label = {
-                Text("Home")
-            },
-            selected = isSelected == PillTimeScreen.Home,
-            onClick = {
-                isSelected = PillTimeScreen.Home
-                onClick(isSelected)
+
+        MyNavigationBarItem(
+            icon = Icons.Default.Notifications,
+            text = "Home",
+            inputType = ScreenType.Home,
+            selectedType = selectedType,
+            onChange = {
+                selectedType = ScreenType.Home
+                onChangeNav(ScreenType.Home)
             }
         )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = null
-                )
-            },
-            label = {
-                Text("Menu")
-            },
-            selected = isSelected == PillTimeScreen.Menu,
-            onClick = {
-                isSelected = PillTimeScreen.Menu
-                onClick(isSelected)
+
+        MyNavigationBarItem(
+            icon = Icons.Default.Menu,
+            text = "Menu",
+            inputType = ScreenType.Menu,
+            selectedType = selectedType,
+            onChange = {
+                selectedType = ScreenType.Menu
+                onChangeNav(ScreenType.Menu)
             }
         )
+//        NavigationBarItem(
+//            icon = {
+//                Icon(
+//                    imageVector = Icons.Default.Notifications,
+//                    contentDescription = null
+//                )
+//            },
+//            label = {
+//                Text("Camera")
+//            },
+//            selected = selectedType == ScreenType.Camera,
+//            onClick = {
+//                selectedType = ScreenType.Camera
+//                onChangeScreen(selectedType)
+//            }
+//        )
+//        NavigationBarItem(
+//            icon = {
+//                Icon(
+//                    imageVector = Icons.Default.Home,
+//                    contentDescription = null
+//                )
+//            },
+//            label = {
+//                Text("Home")
+//            },
+//            selected = selectedType == ScreenType.Home,
+//            onClick = {
+//                selectedType = ScreenType.Home
+//                onChangeScreen(selectedType)
+//            }
+//        )
+//        NavigationBarItem(
+//            icon = {
+//                Icon(
+//                    imageVector = Icons.Default.Menu,
+//                    contentDescription = null
+//                )
+//            },
+//            label = {
+//                Text("Menu")
+//            },
+//            selected = selectedType == ScreenType.Menu,
+//            onClick = {
+//                selectedType = ScreenType.Menu
+//                onChangeScreen(selectedType)
+//            }
+//        )
     }
+}
+
+@Composable
+fun RowScope.MyNavigationBarItem(
+    icon: ImageVector,
+    text: String,
+    inputType: ScreenType,
+    selectedType: ScreenType,
+    onChange: (ScreenType) -> Unit,
+) {
+    NavigationBarItem(
+        icon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null
+            )
+        },
+        label = {
+            Text(text)
+        },
+        selected = selectedType == inputType,
+        onClick = {
+            onChange(inputType)
+        }
+    )
 }
