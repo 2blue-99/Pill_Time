@@ -52,9 +52,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.pilltime.ui.theme.BlueSky
 import com.example.pilltime.viewModel.MyViewModel
 import com.example.domain.model.local.NoticeData
+import com.example.pilltime.ui.theme.Background_Dark
+import com.example.pilltime.ui.theme.Background_Gray
 import com.example.pilltime.ui.theme.ClickOrange
 
 /**
@@ -69,7 +70,7 @@ fun MainScreen(
 ) {
     Column(
         modifier = modifier
-            .background(BlueSky)
+            .background(Background_Dark)
             .fillMaxSize()
     ) {
         TopAdView(list = list)

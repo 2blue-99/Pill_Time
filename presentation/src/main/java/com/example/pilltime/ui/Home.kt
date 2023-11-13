@@ -33,6 +33,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.pilltime.R
+import com.example.pilltime.ui.theme.Background_Gray
+import com.example.pilltime.ui.theme.Bottom_Bar_Gray
 import com.example.pilltime.viewModel.MyViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -59,6 +61,7 @@ fun HomeScreen(
     val currentScreen =
         ScreenType.valueOf(backStackEntry?.destination?.route ?: ScreenType.Menu.name)
     Scaffold(
+        topBar = {},
         bottomBar = {
             if(currentScreen != ScreenType.Camera)
                 SootheBottomNavigation(
@@ -99,7 +102,7 @@ private fun SootheBottomNavigation(
 ) {
     var selectedType by rememberSaveable { mutableStateOf(ScreenType.Home) }
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        containerColor = Background_Gray,
         modifier = modifier
     ) {
         MyNavigationBarItem(
