@@ -105,4 +105,7 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-permissions:0.23.1")
 
     implementation ("io.coil-kt:coil-compose:1.4.0")
+
+    // 라이센스
+    implementation ("com.google.android.gms:play-services-oss-licenses:17.0.1")
 }

@@ -1,6 +1,7 @@
 package com.example.pilltime.util
 
 import android.app.Application
+import com.google.android.gms.oss.licenses.OssLicensesActivity
 import dagger.hilt.android.HiltAndroidApp
 
 /**
