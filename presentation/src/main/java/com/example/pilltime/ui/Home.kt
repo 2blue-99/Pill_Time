@@ -2,7 +2,9 @@
 
 package com.example.pilltime.ui
 
+import android.app.Activity
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -13,12 +15,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,21 +61,36 @@ enum class ScreenType(@StringRes val title: Int) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     navController: NavHostController = rememberNavController(),
 ) {
+    var backPressedTime: Long = 0
+    val activity = LocalContext.current as Activity
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen =
         ScreenType.valueOf(backStackEntry?.destination?.route ?: ScreenType.Menu.name)
+
+    BackHandler(onBack = {
+        if (System.currentTimeMillis() - backPressedTime < 2500) {
+            activity.finish()
+        }
+        makeToast(activity, "한번 더 클릭 시 종료됩니다.")
+        backPressedTime = System.currentTimeMillis()
+    })
+
     Scaffold(
         topBar = {},
         bottomBar = {
             if(currentScreen != ScreenType.Camera)
                 SootheBottomNavigation(
                     onChangeNav = {
-                        navController.navigate(it.toString())
+                        if(currentScreen.name != it.toString())
+                            navController.navigate(it.toString()){
+                                popUpTo(0)
+                            }
                     }
                 )
         },
@@ -81,6 +101,7 @@ fun HomeScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(ScreenType.Home.name) {
+
                 MainScreen(list = listOf("광고 1", "광고 2", "광고 3", "광고 4", "광고 4", "광고 4"))
             }
             composable(ScreenType.Camera.name) {
