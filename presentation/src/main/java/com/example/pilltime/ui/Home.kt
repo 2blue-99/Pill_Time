@@ -89,7 +89,8 @@ fun HomeScreen(
                     onChangeNav = {
                         if(currentScreen.name != it.toString())
                             navController.navigate(it.toString()){
-                                popUpTo(0)
+                                if(it.toString()!=ScreenType.Camera.name)
+                                    popUpTo(0)
                             }
                     }
                 )
