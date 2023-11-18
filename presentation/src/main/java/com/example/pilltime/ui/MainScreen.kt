@@ -149,7 +149,6 @@ fun NoticeText(
 }
 @Composable
 fun AddButton(
-    modifier: Modifier = Modifier,
     viewModel: MyViewModel
 ){
     Row(
