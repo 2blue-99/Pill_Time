@@ -77,7 +77,8 @@ fun SplashScreen(
 
     LaunchedEffect(key1 = activity) {
         isVisible = true
-        delay(1500L)
+//        delay(1500L)
+        delay(500L)
         activity.startActivity(intent)
         activity.finish()
     }

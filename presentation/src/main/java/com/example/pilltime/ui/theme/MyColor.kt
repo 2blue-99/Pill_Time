@@ -13,15 +13,17 @@ val Pink40 = Color(0xFF7D5260)
 val ClickOrange = Color(0xFFFFB6A0)
 
 val Component_Click_Pink = Color(0xEDFF5C74)
-val Component_NonClick_Gray = Color(0x78FFFFFF)
+val Component_NonClick_Gray = Color(0xFF787D81)
 
 val Background_Dark = Color(0xFF000A13)
 val Background_Gray = Color(0xFFCDCDCD)
 
-val Bottom_Bar_Gray = Color(0x2E3339)
+val Bottom_Bar_Gray = Color(0xFF2E3339)
 
-val Button_NonClick_White = Color(0xFFFFFF)
-val Button_Click_White = Color(0x00DB99)
+val Button_NonClick_Gray = Color(0x78FFFFFF)
+val Button_NonClick_White = Color(0xFFFFFFFF)
+val Button_Click_Green = Color(0xFF00DB99)
 
+val TextColor_White = Color(0xFFFFFFFF)
 
 

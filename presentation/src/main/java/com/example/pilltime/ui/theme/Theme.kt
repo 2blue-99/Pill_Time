@@ -26,6 +26,7 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
+    background = Background_Dark
 
 
     /* Other default colors to override
@@ -41,8 +42,6 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun PillTimeTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = LightColorScheme
